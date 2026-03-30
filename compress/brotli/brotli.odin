@@ -5,15 +5,14 @@ package brotli
 import "core:c"
 import "shared:utils_private/library"
 
-@private BROTLI_COMMON_LIB :: library.LIBPATH + "/libbrotlicommon" + library.ARCH_end
-@private BROTLI_DEC_LIB :: library.LIBPATH + "/libbrotlidec" + library.ARCH_end
-@private BROTLI_ENC_LIB :: library.LIBPATH + "/libbrotlienc" + library.ARCH_end
+@(private)
+BROTLI_COMMON_LIB :: library.LIBPATH + "/libbrotlicommon" + library.ARCH_end
+@(private)
+BROTLI_DEC_LIB :: library.LIBPATH + "/libbrotlidec" + library.ARCH_end
+@(private)
+BROTLI_ENC_LIB :: library.LIBPATH + "/libbrotlienc" + library.ARCH_end
 
-foreign import lib {
-	BROTLI_COMMON_LIB,
-	BROTLI_DEC_LIB,
-	BROTLI_ENC_LIB,
-}
+foreign import lib {BROTLI_COMMON_LIB, BROTLI_DEC_LIB, BROTLI_ENC_LIB}
 
 // Brotli quality levels
 QUALITY_MIN :: 0
@@ -58,86 +57,53 @@ EncoderState :: struct {}
 // Decoder state
 DecoderState :: struct {}
 
-@(default_calling_convention="c")
+@(default_calling_convention = "c")
 foreign lib {
 	// Create encoder instance
 	BrotliEncoderCreateInstance :: proc(alloc_func: rawptr, free_func: rawptr, opaque: rawptr) -> ^EncoderState ---
-	
+
 	// Compress data (one-shot)
-	BrotliEncoderCompress :: proc(
-		quality: c.int,
-		lgwin: c.int,
-		mode: c.int,
-		input_size: c.size_t,
-		input_buffer: [^]byte,
-		encoded_size: ^c.size_t,
-		encoded_buffer: [^]byte,
-	) -> c.int ---
-	
+	BrotliEncoderCompress :: proc(quality: c.int, lgwin: c.int, mode: c.int, input_size: c.size_t, input_buffer: [^]byte, encoded_size: ^c.size_t, encoded_buffer: [^]byte) -> c.int ---
+
 	// Compress stream
-	BrotliEncoderCompressStream :: proc(
-		s: ^EncoderState,
-		op: c.int,
-		available_in: ^c.size_t,
-		next_in: ^[^]byte,
-		available_out: ^c.size_t,
-		next_out: ^[^]byte,
-		total_out: ^c.size_t,
-	) -> c.int ---
-	
+	BrotliEncoderCompressStream :: proc(s: ^EncoderState, op: c.int, available_in: ^c.size_t, next_in: ^[^]byte, available_out: ^c.size_t, next_out: ^[^]byte, total_out: ^c.size_t) -> c.int ---
+
 	// Finish stream
-	BrotliEncoderFinishStream :: proc(
-		s: ^EncoderState,
-		available_out: ^c.size_t,
-		next_out: ^[^]byte,
-		total_out: ^c.size_t,
-	) -> c.int ---
-	
+	BrotliEncoderFinishStream :: proc(s: ^EncoderState, available_out: ^c.size_t, next_out: ^[^]byte, total_out: ^c.size_t) -> c.int ---
+
 	// Destroy encoder instance
 	BrotliEncoderDestroyInstance :: proc(s: ^EncoderState) ---
-	
+
 	// Check if encoder is finished
 	BrotliEncoderIsFinished :: proc(s: ^EncoderState) -> c.int ---
-	
+
 	// Check if encoder has more output
 	BrotliEncoderHasMoreOutput :: proc(s: ^EncoderState) -> c.int ---
-	
+
 	// Get maximum compressed size
 	BrotliEncoderMaxCompressedSize :: proc(input_size: c.size_t) -> c.size_t ---
 }
 
-@(default_calling_convention="c")
+@(default_calling_convention = "c")
 foreign lib {
 	// Create decoder instance
 	BrotliDecoderCreateInstance :: proc(alloc_func: rawptr, free_func: rawptr, opaque: rawptr) -> ^DecoderState ---
-	
+
 	// Decompress data (one-shot)
-	BrotliDecoderDecompress :: proc(
-		encoded_size: c.size_t,
-		encoded_buffer: [^]byte,
-		decoded_size: ^c.size_t,
-		decoded_buffer: [^]byte,
-	) -> c.int ---
-	
+	BrotliDecoderDecompress :: proc(encoded_size: c.size_t, encoded_buffer: [^]byte, decoded_size: ^c.size_t, decoded_buffer: [^]byte) -> c.int ---
+
 	// Decompress stream
-	BrotliDecoderDecompressStream :: proc(
-		s: ^DecoderState,
-		available_in: ^c.size_t,
-		next_in: ^[^]byte,
-		available_out: ^c.size_t,
-		next_out: ^[^]byte,
-		total_out: ^c.size_t,
-	) -> c.int ---
-	
+	BrotliDecoderDecompressStream :: proc(s: ^DecoderState, available_in: ^c.size_t, next_in: ^[^]byte, available_out: ^c.size_t, next_out: ^[^]byte, total_out: ^c.size_t) -> c.int ---
+
 	// Check if decoder is finished
 	BrotliDecoderIsFinished :: proc(s: ^DecoderState) -> c.int ---
-	
+
 	// Check if decoder has more output
 	BrotliDecoderHasMoreOutput :: proc(s: ^DecoderState) -> c.int ---
-	
+
 	// Destroy decoder instance
 	BrotliDecoderDestroyInstance :: proc(s: ^DecoderState) ---
-	
+
 	// Get error code
 	BrotliDecoderGetErrorCode :: proc(s: ^DecoderState) -> c.int ---
 }
