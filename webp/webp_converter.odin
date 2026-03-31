@@ -21,7 +21,7 @@ Supports both static images and animated WebP images
 webp_converter :: struct {
 	anim_dec:  ^WebPAnimDecoder,
 	anim_info: WebPAnimInfo,
-	out_fmt:   image_utils.color_fmt,
+	out_fmt:   image_utils.ColorFmt,
 	config:    webp_config,
 	out_data:  []byte,
 	allocator: runtime.Allocator,
@@ -86,14 +86,14 @@ webp_converter_size :: proc "contextless" (self: ^webp_converter) -> u32 {
 		case WebPDecoderConfig:
 			return(
 				u32(t.input.height * t.input.width) *
-				(image_utils.color_fmt_bit(self.out_fmt) >> 3) \
+				(image_utils.ColorFmtBit(self.out_fmt) >> 3) \
 			)
 		case WebPAnimDecoderOptions:
 			return(
 				self.anim_info.canvas_height *
 				self.anim_info.canvas_width *
 				self.anim_info.frame_count *
-				(image_utils.color_fmt_bit(self.out_fmt) >> 3) \
+				(image_utils.ColorFmtBit(self.out_fmt) >> 3) \
 			)
 		}
 	}
@@ -154,7 +154,7 @@ Returns:
 webp_converter_load :: proc(
 	self: ^webp_converter,
 	data: []byte,
-	out_fmt: image_utils.color_fmt,
+	out_fmt: image_utils.ColorFmt,
 	allocator := context.allocator,
 ) -> (
 	[]byte,
@@ -229,7 +229,7 @@ webp_converter_load :: proc(
 	}
 	self.out_data = out_data
 
-	bit := image_utils.color_fmt_bit(self.out_fmt) >> 3
+	bit := image_utils.ColorFmtBit(self.out_fmt) >> 3
 
 	switch &t in self.config {
 	case WebPDecoderConfig:
@@ -296,7 +296,7 @@ Returns:
 webp_converter_load_file :: proc(
 	self: ^webp_converter,
 	file_path: string,
-	out_fmt: image_utils.color_fmt,
+	out_fmt: image_utils.ColorFmt,
 	allocator := context.allocator,
 ) -> (
 	[]byte,
