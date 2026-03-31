@@ -1,12 +1,13 @@
 package freetype
 
 import "core:c"
-import "shared:utils_private/library"
+import "engine:utils_private/library"
 
 FREETYPE_SHARED :: #config(FREETYPE_SHARED, false)
 when FREETYPE_SHARED {
 	#panic("Shared linking for freetype is not supported yet")
 }
+
 
 @(private)
 BROTLI_COMMON_LIB :: library.LIBPATH + "/libbrotlicommon" + library.ARCH_end
@@ -16,13 +17,11 @@ BROTLI_DEC_LIB :: library.LIBPATH + "/libbrotlidec" + library.ARCH_end
 BROTLI_ENC_LIB :: library.LIBPATH + "/libbrotlienc" + library.ARCH_end
 @(private)
 LIB :: library.LIBPATH + "/libfreetype" + library.ARCH_end
-
 when ODIN_OS == .Windows && !library.is_android {
 	foreign import freetype {LIB, "../compress/brotli/" + BROTLI_DEC_LIB, "../compress/brotli/" + BROTLI_ENC_LIB, "../compress/brotli/" + BROTLI_COMMON_LIB, "../compress/bzip2/" + library.LIBPATH + "/libbz2" + library.ARCH_end, "../compress/zlib/" + library.LIBPATH + "/libz" + library.ARCH_end}
 } else {
 	foreign import freetype {LIB, "../compress/brotli/" + BROTLI_DEC_LIB, "../compress/brotli/" + BROTLI_ENC_LIB, "../compress/brotli/" + BROTLI_COMMON_LIB, "../compress/bzip2/" + library.LIBPATH + "/libbz2" + library.ARCH_end, "system:z"}
 }
-
 
 Library :: distinct rawptr
 
