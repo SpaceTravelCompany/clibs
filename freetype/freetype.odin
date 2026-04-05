@@ -177,6 +177,7 @@ Face_Get_Advances_Func :: #type proc "c" (
 Face_Get_Kerning_Func :: #type proc "c" (
 	face: Face,
 	left_glyph, right_glyph: c.uint,
+	kern_mode: c.uint,
 	kerning: ^Vector,
 ) -> Error
 
@@ -467,6 +468,12 @@ Render_Mode :: enum {
 	Max    = 5,
 }
 
+Kerning_Mode :: enum c.uint {
+	Default  = 0,
+	Unfitted = 1,
+	Unscaled = 2,
+}
+
 Size_Metrics :: struct {
 	x_ppem:      c.ushort,
 	y_ppem:      c.ushort,
@@ -612,6 +619,13 @@ foreign freetype {
 	set_char_size :: proc(face: Face, char_width, char_height: F26Dot6, horz_resolution, vert_resolution: c.uint) -> Error ---
 	@(link_name = "FT_Get_Char_Index")
 	get_char_index :: proc(face: Face, code: c.ulong) -> c.uint ---
+	@(link_name = "FT_Get_Kerning")
+	get_kerning :: proc(
+		face: Face,
+		left_glyph, right_glyph: c.uint,
+		kern_mode: Kerning_Mode,
+		akerning: ^Vector,
+	) -> Error ---
 
 	@(link_name = "FT_Get_First_Char")
 	get_first_char :: proc(face: Face, agindex: ^c.uint) -> c.ulong ---
