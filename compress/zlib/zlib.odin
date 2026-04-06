@@ -3,16 +3,10 @@ package vendor_zlib
 
 import "core:c"
 
-import "shared:utils_private/library"
+import "engine:utils_private/library"
 
-when ODIN_OS == .Windows {
-	LIB :: library.LIBPATH + "/libz" + library.ARCH_end
-	foreign import zlib {LIB}
-} else when ODIN_OS == .Linux {
-	foreign import zlib "system:z"
-} else {
-	foreign import zlib "system:z"
-}
+LIB :: library.LIBPATH + "/libz" + library.ARCH_end
+foreign import zlib {LIB}
 
 VERSION :: "1.3.2"
 VERNUM :: 0x12c0

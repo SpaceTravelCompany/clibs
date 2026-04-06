@@ -2,7 +2,7 @@
 package opus
 
 import "core:c"
-import "shared:utils_private/library"
+import "engine:utils_private/library"
 
 @(private)
 LIBOPUS :: library.LIBPATH + "/libopus" + library.ARCH_end

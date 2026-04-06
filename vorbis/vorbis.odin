@@ -4,7 +4,7 @@ package vorbis
 import "../ogg"
 import "core:c"
 import "core:c/libc"
-import "shared:utils_private/library"
+import "engine:utils_private/library"
 
 @(private)
 LIB :: library.LIBPATH + "/libvorbis" + library.ARCH_end

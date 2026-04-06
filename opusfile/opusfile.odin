@@ -5,7 +5,7 @@ import "../ogg"
 import "../opus"
 import "core:c"
 import "core:c/libc"
-import "shared:utils_private/library"
+import "engine:utils_private/library"
 
 
 @(private)

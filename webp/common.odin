@@ -1,7 +1,7 @@
 //odin binding for webp from https://chromium.googlesource.com/webm/libwebp
 package webp
 
-import "shared:utils_private/library"
+import "engine:utils_private/library"
 
 @(private)
 LIB :: library.LIBPATH + "/libwebp" + library.ARCH_end

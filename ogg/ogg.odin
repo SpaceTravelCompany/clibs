@@ -2,7 +2,7 @@
 package ogg
 
 import "core:c"
-import "shared:utils_private/library"
+import "engine:utils_private/library"
 
 @(private)
 LIB :: library.LIBPATH + "/libogg" + library.ARCH_end

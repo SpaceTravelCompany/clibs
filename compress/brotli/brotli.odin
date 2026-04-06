@@ -1,9 +1,8 @@
-//!Not Tested Yet (xfitgd)
 // Bindings for [[Brotli ; https://github.com/google/brotli]]
 package brotli
 
 import "core:c"
-import "shared:utils_private/library"
+import "engine:utils_private/library"
 
 @(private)
 BROTLI_COMMON_LIB :: library.LIBPATH + "/libbrotlicommon" + library.ARCH_end
@@ -107,4 +106,3 @@ foreign lib {
 	// Get error code
 	BrotliDecoderGetErrorCode :: proc(s: ^DecoderState) -> c.int ---
 }
-

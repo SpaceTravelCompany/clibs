@@ -10,22 +10,22 @@ when FREETYPE_SHARED {
 
 
 @(private)
-BROTLI_COMMON_LIB :: library.LIBPATH + "/libbrotlicommon" + library.ARCH_end
+BROTLI_COMMON_LIB ::
+	"../compress/brotli/" + library.LIBPATH + "/libbrotlicommon" + library.ARCH_end
 @(private)
-BROTLI_DEC_LIB :: library.LIBPATH + "/libbrotlidec" + library.ARCH_end
+BROTLI_DEC_LIB :: "../compress/brotli/" + library.LIBPATH + "/libbrotlidec" + library.ARCH_end
 @(private)
-BROTLI_ENC_LIB :: library.LIBPATH + "/libbrotlienc" + library.ARCH_end
+BROTLI_ENC_LIB :: "../compress/brotli/" + library.LIBPATH + "/libbrotlienc" + library.ARCH_end
+
 @(private)
 LIB :: library.LIBPATH + "/libfreetype" + library.ARCH_end
-when ODIN_OS == .Windows && !library.is_android {
-	foreign import freetype {LIB, "../compress/brotli/" + BROTLI_DEC_LIB, "../compress/brotli/" + BROTLI_ENC_LIB, "../compress/brotli/" + BROTLI_COMMON_LIB, "../compress/bzip2/" + library.LIBPATH + "/libbz2" + library.ARCH_end, "../compress/zlib/" + library.LIBPATH + "/libz" + library.ARCH_end}
-} else {
-	foreign import freetype {LIB, "../compress/brotli/" + BROTLI_DEC_LIB, "../compress/brotli/" + BROTLI_ENC_LIB, "../compress/brotli/" + BROTLI_COMMON_LIB, "../compress/bzip2/" + library.LIBPATH + "/libbz2" + library.ARCH_end, "system:z"}
-}
+
+
+foreign import freetype {LIB, BROTLI_DEC_LIB, BROTLI_ENC_LIB, BROTLI_COMMON_LIB, "../compress/bzip2/" + library.LIBPATH + "/libbz2" + library.ARCH_end, "../compress/zlib-ng/" + library.LIBPATH + "/libz" + library.ARCH_end}
 
 Library :: distinct rawptr
 
-Bool :: distinct c.uchar
+Bool :: distinct b8
 F26Dot6 :: c.long
 Fixed :: c.long
 Pos :: c.long
@@ -620,12 +620,7 @@ foreign freetype {
 	@(link_name = "FT_Get_Char_Index")
 	get_char_index :: proc(face: Face, code: c.ulong) -> c.uint ---
 	@(link_name = "FT_Get_Kerning")
-	get_kerning :: proc(
-		face: Face,
-		left_glyph, right_glyph: c.uint,
-		kern_mode: Kerning_Mode,
-		akerning: ^Vector,
-	) -> Error ---
+	get_kerning :: proc(face: Face, left_glyph, right_glyph: c.uint, kern_mode: Kerning_Mode, akerning: ^Vector) -> Error ---
 
 	@(link_name = "FT_Get_First_Char")
 	get_first_char :: proc(face: Face, agindex: ^c.uint) -> c.ulong ---
@@ -699,4 +694,3 @@ Orientation :: enum c.uint {
 	FILL_LEFT  = 1,
 	NONE       = 2,
 }
-
