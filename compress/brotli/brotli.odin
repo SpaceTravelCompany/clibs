@@ -2,7 +2,7 @@
 package brotli
 
 import "core:c"
-import "engine:utils_private/library"
+import "shared:utils_private/library"
 
 @(private)
 BROTLI_COMMON_LIB :: library.LIBPATH + "/libbrotlicommon" + library.ARCH_end

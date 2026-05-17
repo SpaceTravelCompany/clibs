@@ -2,7 +2,7 @@
 package bzip2
 
 import "core:c"
-import "engine:utils_private/library"
+import "shared:utils_private/library"
 
 @(private)
 BZIP2_LIB :: library.LIBPATH + "/libbz2" + library.ARCH_end

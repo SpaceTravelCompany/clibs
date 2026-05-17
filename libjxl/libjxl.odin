@@ -2,7 +2,7 @@
 package libjxl
 
 import "core:c"
-import "engine:utils_private/library"
+import "shared:utils_private/library"
 
 @(private)
 BROTLI_COMMON_LIB ::

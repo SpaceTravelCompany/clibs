@@ -9,7 +9,7 @@ import "core:os"
 import "core:sys/android"
 import "core:sys/linux"
 import "core:sys/windows"
-import "engine:utils_private/library"
+import "shared:utils_private/library"
 
 
 @(private)

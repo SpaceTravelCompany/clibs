@@ -1,7 +1,7 @@
 package freetype
 
 import "core:c"
-import "engine:utils_private/library"
+import "shared:utils_private/library"
 
 FREETYPE_SHARED :: #config(FREETYPE_SHARED, false)
 when FREETYPE_SHARED {

@@ -2,7 +2,7 @@
 package libjpeg_turbo
 
 import "core:c"
-import "engine:utils_private/library"
+import "shared:utils_private/library"
 
 @(private)
 LIBJPEG :: library.LIBPATH + "/libjpeg" + library.ARCH_end

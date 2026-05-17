@@ -3,7 +3,7 @@ package vendor_zlib_ng
 
 import "core:c"
 
-import "engine:utils_private/library"
+import "shared:utils_private/library"
 
 LIB :: library.LIBPATH + "/libz" + library.ARCH_end
 foreign import zlib {LIB}

@@ -2,7 +2,7 @@
 package libjpeg_turbo
 
 import "core:c"
-import "engine:utils_private/library"
+import "shared:utils_private/library"
 
 @(private)
 JPEGLIB_LIB :: library.LIBPATH + "/libjpeg" + library.ARCH_end
@@ -26,7 +26,7 @@ when ODIN_OS == .Windows {
 	boolean :: c.bool
 	INT32 :: c.int
 } else {
-	boolean :: library.BOOL
+	boolean :: b32
 	INT32 :: c.long
 }
 

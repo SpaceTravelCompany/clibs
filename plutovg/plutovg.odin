@@ -2,8 +2,8 @@ package plutovg
 
 import "base:runtime"
 import "core:c"
-import "engine:utils_private"
-import "engine:utils_private/library"
+import "shared:utils_private"
+import "shared:utils_private/library"
 
 @(private)
 LIBPLUTOVG :: library.LIBPATH + "/libplutovg" + library.ARCH_end

@@ -2,7 +2,7 @@
 package lz4
 
 import "core:c"
-import "engine:utils_private/library"
+import "shared:utils_private/library"
 
 @(private)
 LZ4_LIB :: library.LIBPATH + "/liblz4" + library.ARCH_end
