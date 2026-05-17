@@ -49,12 +49,6 @@ Version :: bit_field u32 {
 
 VERSION: Version
 
-@(private, init)
-version_check :: proc "contextless" () {
-	VERSION = Version(OpenSSL_version_num())
-	assert_contextless(VERSION.major == 3, "invalid OpenSSL library version, expected 3.x")
-}
-
 SSL_METHOD :: struct {}
 SSL_CTX :: struct {}
 SSL :: struct {}
@@ -205,7 +199,9 @@ foreign lib {
 
 // This is a macro in c land.
 SSL_set_tlsext_host_name :: proc(ssl: ^SSL, name: cstring) -> c.int {
-	return c.int(SSL_ctrl(ssl, SSL_CTRL_SET_TLSEXT_HOSTNAME, TLSEXT_NAMETYPE_host_name, rawptr(name)))
+	return c.int(
+		SSL_ctrl(ssl, SSL_CTRL_SET_TLSEXT_HOSTNAME, TLSEXT_NAMETYPE_host_name, rawptr(name)),
+	)
 }
 
 // BIO helpers (C macros)
@@ -264,14 +260,24 @@ RSA_load_private_pem_file :: proc(path: cstring) -> ^RSA {
 
 // Encrypt data with public key. Returns encrypted length or -1 on error.
 // out must be at least RSA_size(rsa) bytes.
-RSA_encrypt :: proc(rsa: ^RSA, data: []byte, out: []byte, padding: c.int = RSA_PKCS1_PADDING) -> c.int {
+RSA_encrypt :: proc(
+	rsa: ^RSA,
+	data: []byte,
+	out: []byte,
+	padding: c.int = RSA_PKCS1_PADDING,
+) -> c.int {
 	if rsa == nil || len(data) == 0 || len(out) < int(RSA_size(rsa)) do return -1
 	return RSA_public_encrypt(c.int(len(data)), raw_data(data), raw_data(out), rsa, padding)
 }
 
 // Decrypt data with private key. Returns decrypted length or -1 on error.
 // out must be at least RSA_size(rsa) bytes.
-RSA_decrypt :: proc(rsa: ^RSA, data: []byte, out: []byte, padding: c.int = RSA_PKCS1_PADDING) -> c.int {
+RSA_decrypt :: proc(
+	rsa: ^RSA,
+	data: []byte,
+	out: []byte,
+	padding: c.int = RSA_PKCS1_PADDING,
+) -> c.int {
 	if rsa == nil || len(data) == 0 || len(out) < int(RSA_size(rsa)) do return -1
 	return RSA_private_decrypt(c.int(len(data)), raw_data(data), raw_data(out), rsa, padding)
 }
