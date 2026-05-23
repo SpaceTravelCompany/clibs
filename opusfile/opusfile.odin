@@ -10,8 +10,10 @@ import "shared:utils_private/library"
 
 @(private)
 LIBOPUSFILE :: library.LIBPATH + "/libopusfile" + library.ARCH_end
+@(private)
+LIBOPUS :: "../opus" + library.LIBPATH + "/libopus" + library.ARCH_end
 
-foreign import lib {LIBOPUSFILE}
+foreign import lib {LIBOPUSFILE, LIBOPUS}
 
 /**A request did not succeed.*/
 OP_FALSE :: -1

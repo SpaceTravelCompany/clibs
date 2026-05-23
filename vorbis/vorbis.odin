@@ -12,7 +12,10 @@ LIB :: library.LIBPATH + "/libvorbis" + library.ARCH_end
 LIBENC :: library.LIBPATH + "/libvorbisenc" + library.ARCH_end
 @(private)
 LIBFILE :: library.LIBPATH + "/libvorbisfile" + library.ARCH_end
-foreign import lib {LIB, LIBENC, LIBFILE}
+
+@(private)
+LIBOGG :: "../ogg" + library.LIBPATH + "/libogg" + library.ARCH_end
+foreign import lib {LIB, LIBENC, LIBFILE, LIBOGG}
 
 
 //codec.h
