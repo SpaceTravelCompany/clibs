@@ -424,8 +424,9 @@ lua_pushglobaltable :: #force_inline proc "c" (L: ^lua_State) {
 	lua_rawgeti(L, LUA_REGISTRYINDEX, LUA_RIDX_GLOBALS)
 }
 
-lua_tostring :: #force_inline proc "c" (L: ^lua_State, i: c.int) -> string {
-	return string(lua_tolstring(L, (i), nil))
+// Pointer into Lua-owned string storage; valid until the value is popped or the state is closed.
+lua_tostring :: #force_inline proc "c" (L: ^lua_State, i: c.int) -> cstring {
+	return lua_tolstring(L, i, nil)
 }
 
 lua_insert :: #force_inline proc "c" (L: ^lua_State, idx: c.int) {
@@ -457,8 +458,8 @@ lua_pcall :: #force_inline proc "c" (L: ^lua_State, n: c.int, r: c.int, f: c.int
 lua_upvalueindex :: #force_inline proc "contextless" (i: c.int) -> c.int {
 	return LUA_REGISTRYINDEX - (i)
 }
-luaL_loadfile :: #force_inline proc "c" (L: ^lua_State, f: cstring) {
-	luaL_loadfilex(L, f, nil)
+luaL_loadfile :: #force_inline proc "c" (L: ^lua_State, f: cstring) -> c.int {
+	return luaL_loadfilex(L, f, nil)
 }
 
 luaL_checkversion :: #force_inline proc "c" (L: ^lua_State) {
@@ -485,9 +486,9 @@ luaL_typename :: #force_inline proc "c" (L: ^lua_State, i: c.int) -> cstring {
 	return lua_typename(L, lua_type(L, (i)))
 }
 
-luaL_dofile :: #force_inline proc "c" (L: ^lua_State, fn: cstring) {
-	luaL_loadfile(L, fn)
-	lua_pcall(L, 0, LUA_MULTRET, 0)
+luaL_dofile :: #force_inline proc "c" (L: ^lua_State, fn: cstring) -> bool {
+	if luaL_loadfile(L, fn) != 0 do return false
+	return lua_pcall(L, 0, LUA_MULTRET, 0) == 0
 }
 
 luaL_dostring :: #force_inline proc "c" (L: ^lua_State, s: cstring) -> bool {
