@@ -6,9 +6,9 @@ import "core:fmt"
 import "core:math"
 import "core:mem"
 import "core:os"
-import "core:sys/android"
 import "core:sys/linux"
 import "core:sys/windows"
+import "shared:android"
 import "shared:utils_private/library"
 
 
@@ -49,7 +49,7 @@ foreign lua {
 	lua_gettable :: proc(L: ^lua_State, idx: c.int) -> c.int ---
 	lua_gettop :: proc(L: ^lua_State) -> c.int ---
 	lua_getupvalue :: proc(L: ^lua_State, funcindex: c.int, n: c.int) -> cstring ---
-	lua_getuservalue :: proc(L: ^lua_State, idx: c.int) -> c.int ---
+	lua_getiuservalue :: proc(L: ^lua_State, idx: c.int, n: c.int) -> c.int ---
 	lua_iscfunction :: proc(L: ^lua_State, idx: c.int) -> c.int ---
 	lua_isinteger :: proc(L: ^lua_State, idx: c.int) -> c.int ---
 	lua_isnumber :: proc(L: ^lua_State, idx: c.int) -> c.int ---
@@ -58,16 +58,16 @@ foreign lua {
 	lua_isyieldable :: proc(L: ^lua_State) -> c.int ---
 	lua_len :: proc(L: ^lua_State, idx: c.int) ---
 	lua_load :: proc(L: ^lua_State, reader: lua_Reader, dt: rawptr, chunkname: cstring, mode: cstring) -> c.int ---
-	lua_newstate :: proc(f: lua_Alloc, ud: rawptr) -> ^lua_State ---
+	lua_newstate :: proc(f: lua_Alloc, ud: rawptr, seed: c.uint) -> ^lua_State ---
 	lua_newthread :: proc(L: ^lua_State) -> ^lua_State ---
-	lua_newuserdata :: proc(L: ^lua_State, sz: c.ptrdiff_t) -> rawptr ---
+	lua_newuserdatauv :: proc(L: ^lua_State, sz: c.size_t, n: c.int) -> rawptr ---
 	lua_next :: proc(L: ^lua_State, idx: c.int) -> c.int ---
 	lua_pcallk :: proc(L: ^lua_State, nargs: c.int, nresults: c.int, errfunc: c.int, ctx: lua_KContext, k: lua_KFunction) -> c.int ---
-	lua_pushboolean :: proc(L: ^lua_State, b: c.bool) ---
+	lua_pushboolean :: proc(L: ^lua_State, b: c.int) ---
 	lua_pushcclosure :: proc(L: ^lua_State, fn: lua_CFunction, n: c.int) ---
 	lua_pushinteger :: proc(L: ^lua_State, n: lua_Integer) ---
 	lua_pushlightuserdata :: proc(L: ^lua_State, p: rawptr) ---
-	lua_pushlstring :: proc(L: ^lua_State, s: cstring, len: c.ptrdiff_t) -> cstring ---
+	lua_pushlstring :: proc(L: ^lua_State, s: cstring, len: c.size_t) -> cstring ---
 	lua_pushnil :: proc(L: ^lua_State) ---
 	lua_pushnumber :: proc(L: ^lua_State, n: lua_Number) ---
 	lua_pushstring :: proc(L: ^lua_State, s: cstring) -> cstring ---
@@ -77,11 +77,11 @@ foreign lua {
 	lua_rawget :: proc(L: ^lua_State, idx: c.int) -> c.int ---
 	lua_rawgeti :: proc(L: ^lua_State, idx: c.int, n: lua_Integer) -> c.int ---
 	lua_rawgetp :: proc(L: ^lua_State, idx: c.int, p: rawptr) -> c.int ---
-	lua_rawlen :: proc(L: ^lua_State, idx: c.int) -> c.ptrdiff_t ---
+	lua_rawlen :: proc(L: ^lua_State, idx: c.int) -> lua_Unsigned ---
 	lua_rawset :: proc(L: ^lua_State, idx: c.int) ---
 	lua_rawseti :: proc(L: ^lua_State, idx: c.int, n: lua_Integer) ---
 	lua_rawsetp :: proc(L: ^lua_State, idx: c.int, p: rawptr) ---
-	lua_resume :: proc(L: ^lua_State, from: ^lua_State, narg: c.int) -> c.int ---
+	lua_resume :: proc(L: ^lua_State, from: ^lua_State, narg: c.int, nres: ^c.int) -> c.int ---
 	lua_rotate :: proc(L: ^lua_State, idx: c.int, n: c.int) ---
 	lua_setallocf :: proc(L: ^lua_State, f: lua_Alloc, ud: rawptr) ---
 	lua_setfield :: proc(L: ^lua_State, idx: c.int, k: cstring) ---
@@ -93,13 +93,13 @@ foreign lua {
 	lua_settable :: proc(L: ^lua_State, idx: c.int) ---
 	lua_settop :: proc(L: ^lua_State, idx: c.int) ---
 	lua_setupvalue :: proc(L: ^lua_State, funcindex: c.int, n: c.int) -> cstring ---
-	lua_setuservalue :: proc(L: ^lua_State, idx: c.int) ---
+	lua_setiuservalue :: proc(L: ^lua_State, idx: c.int, n: c.int) -> c.int ---
 	lua_status :: proc(L: ^lua_State) -> c.int ---
-	lua_stringtonumber :: proc(L: ^lua_State, s: cstring) -> c.ptrdiff_t ---
+	lua_stringtonumber :: proc(L: ^lua_State, s: cstring) -> c.size_t ---
 	lua_toboolean :: proc(L: ^lua_State, idx: c.int) -> c.int ---
 	lua_tocfunction :: proc(L: ^lua_State, idx: c.int) -> lua_CFunction ---
 	lua_tointegerx :: proc(L: ^lua_State, idx: c.int, isnum: ^c.int) -> lua_Integer ---
-	lua_tolstring :: proc(L: ^lua_State, idx: c.int, len: ^c.ptrdiff_t) -> cstring ---
+	lua_tolstring :: proc(L: ^lua_State, idx: c.int, len: ^c.size_t) -> cstring ---
 	lua_tonumberx :: proc(L: ^lua_State, idx: c.int, isnum: ^c.int) -> lua_Number ---
 	lua_topointer :: proc(L: ^lua_State, idx: c.int) -> rawptr ---
 	lua_tothread :: proc(L: ^lua_State, idx: c.int) -> ^lua_State ---
@@ -115,13 +115,13 @@ foreign lua {
 	luaL_callmeta :: proc(L: ^lua_State, obj: c.int, e: cstring) -> c.int ---
 	luaL_checkany :: proc(L: ^lua_State, arg: c.int) ---
 	luaL_checkinteger :: proc(L: ^lua_State, arg: c.int) -> lua_Integer ---
-	luaL_checklstring :: proc(L: ^lua_State, arg: c.int, l: ^c.ptrdiff_t) -> cstring ---
+	luaL_checklstring :: proc(L: ^lua_State, arg: c.int, l: ^c.size_t) -> cstring ---
 	luaL_checknumber :: proc(L: ^lua_State, arg: c.int) -> lua_Number ---
 	luaL_checkoption :: proc(L: ^lua_State, arg: c.int, def: cstring, lst: ^cstring) -> c.int ---
 	luaL_checkstack :: proc(L: ^lua_State, sz: c.int, msg: cstring) ---
 	luaL_checktype :: proc(L: ^lua_State, arg: c.int, t: c.int) ---
 	luaL_checkudata :: proc(L: ^lua_State, ud: c.int, tname: cstring) -> rawptr ---
-	luaL_checkversion_ :: proc(L: ^lua_State, ver: lua_Number, sz: c.ptrdiff_t) ---
+	luaL_checkversion_ :: proc(L: ^lua_State, ver: lua_Number, sz: c.size_t) ---
 	luaL_execresult :: proc(L: ^lua_State, stat: c.int) -> c.int ---
 	luaL_fileresult :: proc(L: ^lua_State, stat: c.int, fname: cstring) -> c.int ---
 	luaL_getmetafield :: proc(L: ^lua_State, obj: c.int, e: cstring) -> c.int ---
@@ -135,20 +135,38 @@ foreign lua {
 	luaL_newstate :: proc() -> ^lua_State ---
 	luaL_openselectedlibs :: proc(L: ^lua_State, load: c.int, preload: c.int) ---
 	luaL_optinteger :: proc(L: ^lua_State, arg: c.int, def: lua_Integer) -> lua_Integer ---
-	luaL_optlstring :: proc(L: ^lua_State, arg: c.int, def: cstring, l: ^c.ptrdiff_t) -> cstring ---
+	luaL_optlstring :: proc(L: ^lua_State, arg: c.int, def: cstring, l: ^c.size_t) -> cstring ---
 	luaL_optnumber :: proc(L: ^lua_State, arg: c.int, def: lua_Number) -> lua_Number ---
 	luaL_ref :: proc(L: ^lua_State, t: c.int) -> c.int ---
 	luaL_requiref :: proc(L: ^lua_State, modname: cstring, openf: lua_CFunction, glb: c.int) ---
 	luaL_setfuncs :: proc(L: ^lua_State, l: ^luaL_Reg, nup: c.int) ---
 	luaL_setmetatable :: proc(L: ^lua_State, tname: cstring) ---
 	luaL_testudata :: proc(L: ^lua_State, ud: c.int, tname: cstring) -> rawptr ---
-	luaL_tolstring :: proc(L: ^lua_State, idx: c.int, len: ^c.ptrdiff_t) -> cstring ---
+	luaL_tolstring :: proc(L: ^lua_State, idx: c.int, len: ^c.size_t) -> cstring ---
 	luaL_traceback :: proc(L: ^lua_State, L1: ^lua_State, msg: cstring, level: c.int) ---
 	luaL_where :: proc(L: ^lua_State, lvl: c.int) ---
 
 	lua_numbertocstring :: proc(L: ^lua_State, idx: c.int, buff: [^]c.char) -> c.uint ---
 	lua_pushexternalstring :: proc(L: ^lua_State, s: cstring, len: c.size_t, falloc: lua_Alloc, ud: rawptr) -> cstring ---
 	luaL_alloc :: proc(ud: rawptr, ptr: rawptr, osize: c.size_t, nsize: c.size_t) -> rawptr ---
+	lua_closethread :: proc(L: ^lua_State, from: ^lua_State) -> c.int ---
+	lua_setwarnf :: proc(L: ^lua_State, f: lua_WarnFunction, ud: rawptr) ---
+	lua_warning :: proc(L: ^lua_State, msg: cstring, tocont: c.int) ---
+	lua_toclose :: proc(L: ^lua_State, idx: c.int) ---
+	lua_closeslot :: proc(L: ^lua_State, idx: c.int) ---
+	luaL_error :: proc(L: ^lua_State, fmt: cstring, #c_vararg args: ..any) -> c.int ---
+	luaL_typeerror :: proc(L: ^lua_State, arg: c.int, tname: cstring) -> c.int ---
+	luaL_makeseed :: proc(L: ^lua_State) -> c.uint ---
+	luaL_buffinit :: proc(L: ^lua_State, B: ^luaL_Buffer) ---
+	luaL_prepbuffsize :: proc(B: ^luaL_Buffer, sz: c.size_t) -> [^]u8 ---
+	luaL_addlstring :: proc(B: ^luaL_Buffer, s: cstring, l: c.size_t) ---
+	luaL_addstring :: proc(B: ^luaL_Buffer, s: cstring) ---
+	luaL_addvalue :: proc(B: ^luaL_Buffer) ---
+	luaL_pushresult :: proc(B: ^luaL_Buffer) ---
+	luaL_pushresultsize :: proc(B: ^luaL_Buffer, sz: c.size_t) ---
+	luaL_buffinitsize :: proc(L: ^lua_State, B: ^luaL_Buffer, sz: c.size_t) -> [^]u8 ---
+	luaL_addgsub :: proc(B: ^luaL_Buffer, s: cstring, p: cstring, r: cstring) ---
+	luaL_unref :: proc(L: ^lua_State, t: c.int, ref: c.int) ---
 }
 
 luaL_openlibs :: proc "contextless" (L: ^lua_State) {
@@ -210,9 +228,9 @@ LUA_NUMTAGS :: 9
 
 LUA_MINSTACK :: 20
 
-LUA_RIDX_MAINTHREAD :: 1
 LUA_RIDX_GLOBALS :: 2
-LUA_RIDX_LAST :: LUA_RIDX_GLOBALS
+LUA_RIDX_MAINTHREAD :: 3
+LUA_RIDX_LAST :: 3
 
 LUA_OPADD :: 0
 LUA_OPSUB :: 1
@@ -239,9 +257,18 @@ LUA_GCCOLLECT :: 2
 LUA_GCCOUNT :: 3
 LUA_GCCOUNTB :: 4
 LUA_GCSTEP :: 5
-LUA_GCSETPAUSE :: 6
-LUA_GCSETSTEPMUL :: 7
-LUA_GCISRUNNING :: 9
+LUA_GCISRUNNING :: 6
+LUA_GCGEN :: 7
+LUA_GCINC :: 8
+LUA_GCPARAM :: 9
+
+LUA_GCPMINORMUL :: 0
+LUA_GCPMAJORMINOR :: 1
+LUA_GCPMINORMAJOR :: 2
+LUA_GCPPAUSE :: 3
+LUA_GCPSTEPMUL :: 4
+LUA_GCPSTEPSIZE :: 5
+LUA_GCPN :: 6
 
 LUA_HOOKCALL :: 0
 LUA_HOOKRET :: 1
@@ -257,8 +284,12 @@ LUA_MASKCOUNT :: (1 << LUA_HOOKCOUNT)
 LUA_ERRFILE :: (LUA_ERRERR + 1)
 LUA_LOADED_TABLE :: "_LOADED"
 LUA_PRELOAD_TABLE :: "_PRELOAD"
+LUA_GNAME :: "_G"
+LUA_FILEHANDLE :: "FILE*"
+LUA_N2SBUFFSZ :: 64
 
 LUAL_NUMSIZES :: (size_of(lua_Integer) * 16 + size_of(lua_Number))
+LUAL_BUFFERSIZE: c.size_t : (16 * size_of(rawptr) * size_of(lua_Number))
 
 LUA_NOREF :: -2
 LUA_REFNIL :: -1
@@ -268,16 +299,12 @@ LUA_REFNIL :: -1
 */
 lua_CFunction :: #type proc "c" (L: ^lua_State) -> c.int
 lua_KFunction :: #type proc "c" (L: ^lua_State, status: c.int, ctx: lua_KContext) -> c.int
-lua_Reader :: #type proc "c" (L: ^lua_State, ud: rawptr, sz: ^c.ptrdiff_t) -> cstring
-lua_Writer :: #type proc "c" (L: ^lua_State, p: cstring, sz: c.ptrdiff_t, ud: rawptr) -> c.int
-luaL_unref :: #type proc "c" (L: ^lua_State, t: c.int, ref: c.int)
+lua_Reader :: #type proc "c" (L: ^lua_State, ud: rawptr, sz: ^c.size_t) -> cstring
+lua_Writer :: #type proc "c" (L: ^lua_State, p: cstring, sz: c.size_t, ud: rawptr) -> c.int
 lua_Hook :: #type proc "c" (L: ^lua_State, ar: ^lua_Debug)
-lua_Alloc :: #type proc "c" (
-	ud: rawptr,
-	ptr: rawptr,
-	osize: c.ptrdiff_t,
-	nsize: c.ptrdiff_t,
-) -> rawptr
+lua_Alloc :: #type proc "c" (ud: rawptr, ptr: rawptr, osize: c.size_t, nsize: c.size_t) -> rawptr
+
+lua_WarnFunction :: #type proc "c" (ud: rawptr, msg: cstring, tocont: c.int)
 
 // lua_ident: ^u8;
 
@@ -295,16 +322,35 @@ lua_Debug :: struct {
 	namewhat:        cstring,
 	what:            cstring,
 	source:          cstring,
+	srclen:          c.size_t,
 	currentline:     c.int,
 	linedefined:     c.int,
 	lastlinedefined: c.int,
 	nups:            u8,
 	nparams:         u8,
 	isvararg:        i8,
+	extraargs:       u8,
 	istailcall:      i8,
+	ftransfer:       c.int,
+	ntransfer:       c.int,
 	short_src:       [LUA_IDSIZE]i8,
 	/* private part */
 	i_ci:            ^CallInfo,
+}
+
+luaL_Buffer :: struct {
+	b:    [^]u8,
+	size: c.size_t,
+	n:    c.size_t,
+	L:    ^lua_State,
+	init: struct #raw_union {
+		b: [LUAL_BUFFERSIZE]u8,
+	},
+}
+
+luaL_Stream :: struct {
+	f:      rawptr,
+	closef: lua_CFunction,
 }
 
 /*
@@ -429,9 +475,6 @@ luaL_newlib :: #force_inline proc "contextless" (L: ^lua_State, l: []luaL_Reg) {
 	luaL_setfuncs(L, &l[0], 0)
 }
 
-// luaL_argcheck :: (L:^ lua_State, cond,arg,extramsg)	\
-// 		((void)((cond) || luaL_argerror(L, (arg), (extramsg))))
-
 luaL_checkstring :: #force_inline proc "c" (L: ^lua_State, n: c.int) -> cstring {
 	return luaL_checklstring(L, (n), nil)
 }
@@ -472,4 +515,78 @@ luaL_loadbuffer :: #force_inline proc "c" (
 	n: cstring,
 ) -> c.int {
 	return luaL_loadbufferx(L, s, sz, n, nil)
+}
+
+lua_newuserdata :: #force_inline proc "contextless" (L: ^lua_State, sz: c.size_t) -> rawptr {
+	return lua_newuserdatauv(L, sz, 1)
+}
+
+lua_getuservalue :: #force_inline proc "c" (L: ^lua_State, idx: c.int) -> c.int {
+	return lua_getiuservalue(L, idx, 1)
+}
+
+lua_setuservalue :: #force_inline proc "c" (L: ^lua_State, idx: c.int) -> c.int {
+	return lua_setiuservalue(L, idx, 1)
+}
+
+luaL_bufflen :: #force_inline proc "contextless" (bf: ^luaL_Buffer) -> c.size_t {
+	return bf.n
+}
+
+luaL_buffaddr :: #force_inline proc "contextless" (bf: ^luaL_Buffer) -> [^]u8 {
+	return bf.b
+}
+
+luaL_prepbuffer :: #force_inline proc "c" (B: ^luaL_Buffer) -> [^]u8 {
+	return luaL_prepbuffsize(B, LUAL_BUFFERSIZE)
+}
+
+luaL_addchar :: #force_inline proc "c" (B: ^luaL_Buffer, c: u8) {
+	if B.n >= B.size {
+		luaL_prepbuffsize(B, 1)
+	}
+	B.b[B.n] = c
+	B.n += 1
+}
+
+luaL_addsize :: #force_inline proc "contextless" (B: ^luaL_Buffer, s: c.size_t) {
+	B.n += s
+}
+
+luaL_buffsub :: #force_inline proc "contextless" (B: ^luaL_Buffer, s: c.size_t) {
+	B.n -= s
+}
+
+luaL_pushfail :: #force_inline proc "c" (L: ^lua_State) {
+	lua_pushnil(L)
+}
+
+luaL_intop :: #force_inline proc "contextless" (
+	$op: proc(l, r: lua_Unsigned) -> lua_Unsigned,
+	v1: lua_Integer,
+	v2: lua_Integer,
+) -> lua_Integer {
+	return lua_Integer(op(lua_Unsigned(v1), lua_Unsigned(v2)))
+}
+
+luaL_argcheck :: #force_inline proc "c" (
+	L: ^lua_State,
+	cond: c.bool,
+	arg: c.int,
+	extramsg: cstring,
+) {
+	if !cond {
+		luaL_argerror(L, arg, extramsg)
+	}
+}
+
+luaL_argexpected :: #force_inline proc "c" (
+	L: ^lua_State,
+	cond: c.bool,
+	arg: c.int,
+	tname: cstring,
+) {
+	if !cond {
+		luaL_typeerror(L, arg, tname)
+	}
 }
