@@ -5,6 +5,9 @@ import "core:c/libc"
 import "core:strings"
 import "core:time"
 
+// OpenSSL version selection: set to 3 for 3.5.x, 4 for 4.0.x
+OPENSSL_VERSION_MAJOR :: #config(OPENSSL_VERSION_MAJOR, 4)
+
 //SHARED :: #config(OPENSSL_SHARED, false) //edited
 
 when ODIN_ARCH == .amd64 {
@@ -29,15 +32,23 @@ when ODIN_OS == .Windows && ODIN_PLATFORM_SUBTARGET == .Default {
 	ARCH_end_so :: __ARCH_end + ".so"
 }
 
+when OPENSSL_VERSION_MAJOR == 3 {
+	__LIB_DIR :: "lib/3.5.6"
+} else {
+	__LIB_DIR :: "lib"
+}
+
 when ODIN_PLATFORM_SUBTARGET == .Android {
-	foreign import lib {"lib/android/libssl" + ARCH_end, "lib/android/libcrypto" + ARCH_end}
+	foreign import lib {__LIB_DIR + "/android/libssl" + ARCH_end, __LIB_DIR + "/android/libcrypto" + ARCH_end}
 } else when ODIN_OS == .Windows {
-	foreign import lib {"lib/windows/libssl" + ARCH_end, "lib/windows/libcrypto" + ARCH_end, "system:ws2_32.lib", "system:gdi32.lib", "system:advapi32.lib", "system:crypt32.lib", "system:user32.lib"}
-} else when ODIN_OS == .Darwin {
+	foreign import lib {__LIB_DIR + "/windows/libssl" + ARCH_end, __LIB_DIR + "/windows/libcrypto" + ARCH_end, "system:ws2_32.lib", "system:gdi32.lib", "system:advapi32.lib", "system:crypt32.lib", "system:user32.lib"}
+} else when ODIN_OS == .Darwin && OPENSSL_VERSION_MAJOR == 3 {
 	foreign import lib {"system:ssl.3", "system:crypto.3"}
+} else when ODIN_OS == .Darwin && OPENSSL_VERSION_MAJOR == 4 {
+	foreign import lib {"system:ssl.4", "system:crypto.4"}
 } else {
 	foreign import lib {"system:ssl", "system:crypto"}
-	//foreign import lib {"lib/linux/libssl" + ARCH_end, "lib/linux/libcrypto" + ARCH_end}
+	//foreign import lib {__LIB_DIR + "/linux/libssl" + ARCH_end, __LIB_DIR + "/linux/libcrypto" + ARCH_end}
 }
 
 Version :: bit_field u32 {
