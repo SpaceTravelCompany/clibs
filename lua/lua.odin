@@ -167,6 +167,17 @@ foreign lua {
 	luaL_buffinitsize :: proc(L: ^lua_State, B: ^luaL_Buffer, sz: c.size_t) -> [^]u8 ---
 	luaL_addgsub :: proc(B: ^luaL_Buffer, s: cstring, p: cstring, r: cstring) ---
 	luaL_unref :: proc(L: ^lua_State, t: c.int, ref: c.int) ---
+
+	luaopen_base :: proc(L: ^lua_State) -> c.int ---
+	luaopen_coroutine :: proc(L: ^lua_State) -> c.int ---
+	luaopen_table :: proc(L: ^lua_State) -> c.int ---
+	luaopen_io :: proc(L: ^lua_State) -> c.int ---
+	luaopen_os :: proc(L: ^lua_State) -> c.int ---
+	luaopen_string :: proc(L: ^lua_State) -> c.int ---
+	luaopen_utf8 :: proc(L: ^lua_State) -> c.int ---
+	luaopen_math :: proc(L: ^lua_State) -> c.int ---
+	luaopen_debug :: proc(L: ^lua_State) -> c.int ---
+	luaopen_package :: proc(L: ^lua_State) -> c.int ---
 }
 
 luaL_openlibs :: proc "contextless" (L: ^lua_State) {
