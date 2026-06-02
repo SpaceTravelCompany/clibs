@@ -5,9 +5,9 @@ import "core:c"
 import "shared:utils_private/library"
 
 @(private)
-LIBJPEG :: library.LIBPATH + "/libjpeg" + library.ARCH_end
+LIBJPEG :: library.Libpath + "/libjpeg" + library.ArchEnd
 @(private)
-LIBTURBOJPEG :: library.LIBPATH + "/libturbojpeg" + library.ARCH_end
+LIBTURBOJPEG :: library.Libpath + "/libturbojpeg" + library.ArchEnd
 
 foreign import turbojpeg {LIBTURBOJPEG, LIBJPEG}
 

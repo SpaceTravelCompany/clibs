@@ -5,7 +5,7 @@ import "core:c"
 import "shared:utils_private/library"
 
 @(private)
-LIB :: library.LIBPATH + "/libogg" + library.ARCH_end
+LIB :: library.Libpath + "/libogg" + library.ArchEnd
 foreign import lib {LIB}
 
 // ogg_types.h

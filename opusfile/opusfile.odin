@@ -9,9 +9,9 @@ import "shared:utils_private/library"
 
 
 @(private)
-LIBOPUSFILE :: library.LIBPATH + "/libopusfile" + library.ARCH_end
+LIBOPUSFILE :: library.Libpath + "/libopusfile" + library.ArchEnd
 @(private)
-LIBOPUS :: "../opus" + library.LIBPATH + "/libopus" + library.ARCH_end
+LIBOPUS :: "../opus" + library.Libpath + "/libopus" + library.ArchEnd
 
 foreign import lib {LIBOPUSFILE, LIBOPUS}
 

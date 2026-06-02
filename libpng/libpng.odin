@@ -6,9 +6,9 @@ import "core:c/libc"
 import "shared:utils_private/library"
 
 @(private)
-LIBPNG_LIB :: library.LIBPATH + "/libpng" + library.ARCH_end
+LIBPNG_LIB :: library.Libpath + "/libpng" + library.ArchEnd
 @(private)
-ZLIB_LIB :: "../compress/zlib-ng/" + library.LIBPATH + "/libz" + library.ARCH_end
+ZLIB_LIB :: "../compress/zlib-ng/" + library.Libpath + "/libz" + library.ArchEnd
 
 foreign import libpng {LIBPNG_LIB, ZLIB_LIB}
 

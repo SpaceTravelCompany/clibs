@@ -5,7 +5,7 @@ import "core:c"
 import "shared:utils_private/library"
 
 @(private)
-JPEGLIB_LIB :: library.LIBPATH + "/libjpeg" + library.ARCH_end
+JPEGLIB_LIB :: library.Libpath + "/libjpeg" + library.ArchEnd
 
 foreign import jpeglib {JPEGLIB_LIB}
 

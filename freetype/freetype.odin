@@ -11,17 +11,17 @@ when FREETYPE_SHARED {
 
 @(private)
 BROTLI_COMMON_LIB ::
-	"../compress/brotli/" + library.LIBPATH + "/libbrotlicommon" + library.ARCH_end
+	"../compress/brotli/" + library.Libpath + "/libbrotlicommon" + library.ArchEnd
 @(private)
-BROTLI_DEC_LIB :: "../compress/brotli/" + library.LIBPATH + "/libbrotlidec" + library.ARCH_end
+BROTLI_DEC_LIB :: "../compress/brotli/" + library.Libpath + "/libbrotlidec" + library.ArchEnd
 @(private)
-BROTLI_ENC_LIB :: "../compress/brotli/" + library.LIBPATH + "/libbrotlienc" + library.ARCH_end
+BROTLI_ENC_LIB :: "../compress/brotli/" + library.Libpath + "/libbrotlienc" + library.ArchEnd
 
 @(private)
-LIB :: library.LIBPATH + "/libfreetype" + library.ARCH_end
+LIB :: library.Libpath + "/libfreetype" + library.ArchEnd
 
 
-foreign import freetype {LIB, BROTLI_DEC_LIB, BROTLI_ENC_LIB, BROTLI_COMMON_LIB, "../compress/bzip2/" + library.LIBPATH + "/libbz2" + library.ARCH_end, "../compress/zlib-ng/" + library.LIBPATH + "/libz" + library.ARCH_end}
+foreign import freetype {LIB, BROTLI_DEC_LIB, BROTLI_ENC_LIB, BROTLI_COMMON_LIB, "../compress/bzip2/" + library.Libpath + "/libbz2" + library.ArchEnd, "../compress/zlib-ng/" + library.Libpath + "/libz" + library.ArchEnd}
 
 Library :: distinct rawptr
 

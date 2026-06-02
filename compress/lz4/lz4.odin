@@ -5,7 +5,7 @@ import "core:c"
 import "shared:utils_private/library"
 
 @(private)
-LZ4_LIB :: library.LIBPATH + "/liblz4" + library.ARCH_end
+LZ4_LIB :: library.Libpath + "/liblz4" + library.ArchEnd
 
 foreign import lib {LZ4_LIB}
 

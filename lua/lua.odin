@@ -13,7 +13,7 @@ import "shared:utils_private/library"
 
 
 @(private)
-LIB :: library.LIBPATH + "/liblua" + library.ARCH_end
+LIB :: library.Libpath + "/liblua" + library.ArchEnd
 
 foreign import lua {LIB}
 

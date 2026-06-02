@@ -5,7 +5,7 @@ import "core:c"
 import "shared:utils_private/library"
 
 @(private)
-BZIP2_LIB :: library.LIBPATH + "/libbz2" + library.ARCH_end
+BZIP2_LIB :: library.Libpath + "/libbz2" + library.ArchEnd
 
 foreign import lib {BZIP2_LIB}
 

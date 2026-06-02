@@ -6,20 +6,20 @@ import "shared:utils_private/library"
 
 @(private)
 BROTLI_COMMON_LIB ::
-	"../compress/brotli/" + library.LIBPATH + "/libbrotlicommon" + library.ARCH_end
+	"../compress/brotli/" + library.Libpath + "/libbrotlicommon" + library.ArchEnd
 @(private)
-BROTLI_DEC_LIB :: "../compress/brotli/" + library.LIBPATH + "/libbrotlidec" + library.ARCH_end
+BROTLI_DEC_LIB :: "../compress/brotli/" + library.Libpath + "/libbrotlidec" + library.ArchEnd
 @(private)
-BROTLI_ENC_LIB :: "../compress/brotli/" + library.LIBPATH + "/libbrotlienc" + library.ARCH_end
+BROTLI_ENC_LIB :: "../compress/brotli/" + library.Libpath + "/libbrotlienc" + library.ArchEnd
 
 @(private)
-LIB :: library.LIBPATH + "/libjxl" + library.ARCH_end
+LIB :: library.Libpath + "/libjxl" + library.ArchEnd
 @(private)
-LIB_THREADS :: library.LIBPATH + "/libjxl_threads" + library.ARCH_end
+LIB_THREADS :: library.Libpath + "/libjxl_threads" + library.ArchEnd
 @(private)
-LIB_CMS :: library.LIBPATH + "/libjxl_cms" + library.ARCH_end
+LIB_CMS :: library.Libpath + "/libjxl_cms" + library.ArchEnd
 
-foreign import lib {LIB, LIB_THREADS, LIB_CMS, BROTLI_DEC_LIB, BROTLI_ENC_LIB, BROTLI_COMMON_LIB, "../compress/zlib-ng/" + library.LIBPATH + "/libz" + library.ARCH_end}
+foreign import lib {LIB, LIB_THREADS, LIB_CMS, BROTLI_DEC_LIB, BROTLI_ENC_LIB, BROTLI_COMMON_LIB, "../compress/zlib-ng/" + library.Libpath + "/libz" + library.ArchEnd}
 
 VERSION_MAJOR :: 0
 VERSION_MINOR :: 12

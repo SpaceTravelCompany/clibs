@@ -7,14 +7,14 @@ import "core:c/libc"
 import "shared:utils_private/library"
 
 @(private)
-LIB :: library.LIBPATH + "/libvorbis" + library.ARCH_end
+LIB :: library.Libpath + "/libvorbis" + library.ArchEnd
 @(private)
-LIBENC :: library.LIBPATH + "/libvorbisenc" + library.ARCH_end
+LIBENC :: library.Libpath + "/libvorbisenc" + library.ArchEnd
 @(private)
-LIBFILE :: library.LIBPATH + "/libvorbisfile" + library.ARCH_end
+LIBFILE :: library.Libpath + "/libvorbisfile" + library.ArchEnd
 
 @(private)
-LIBOGG :: "../ogg" + library.LIBPATH + "/libogg" + library.ARCH_end
+LIBOGG :: "../ogg" + library.Libpath + "/libogg" + library.ArchEnd
 foreign import lib {LIB, LIBENC, LIBFILE, LIBOGG}
 
 

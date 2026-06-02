@@ -5,11 +5,11 @@ import "core:c"
 import "shared:utils_private/library"
 
 @(private)
-BROTLI_COMMON_LIB :: library.LIBPATH + "/libbrotlicommon" + library.ARCH_end
+BROTLI_COMMON_LIB :: library.Libpath + "/libbrotlicommon" + library.ArchEnd
 @(private)
-BROTLI_DEC_LIB :: library.LIBPATH + "/libbrotlidec" + library.ARCH_end
+BROTLI_DEC_LIB :: library.Libpath + "/libbrotlidec" + library.ArchEnd
 @(private)
-BROTLI_ENC_LIB :: library.LIBPATH + "/libbrotlienc" + library.ARCH_end
+BROTLI_ENC_LIB :: library.Libpath + "/libbrotlienc" + library.ArchEnd
 
 foreign import lib {BROTLI_COMMON_LIB, BROTLI_DEC_LIB, BROTLI_ENC_LIB}
 

@@ -4,8 +4,8 @@ package webp
 import "shared:utils_private/library"
 
 @(private)
-LIB :: library.LIBPATH + "/libwebp" + library.ARCH_end
+LIB :: library.Libpath + "/libwebp" + library.ArchEnd
 @(private)
-LIBDEMUX :: library.LIBPATH + "/libwebpdemux" + library.ARCH_end
+LIBDEMUX :: library.Libpath + "/libwebpdemux" + library.ArchEnd
 @(private)
-LIBMUX :: library.LIBPATH + "/libwebpmux" + library.ARCH_end
+LIBMUX :: library.Libpath + "/libwebpmux" + library.ArchEnd

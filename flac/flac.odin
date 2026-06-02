@@ -6,7 +6,7 @@ import "core:c"
 import "shared:utils_private/library"
 
 @(private)
-LIB :: library.LIBPATH + "/libFLAC" + library.ARCH_end
+LIB :: library.Libpath + "/libFLAC" + library.ArchEnd
 foreign import lib {LIB}
 
 // ============================================================

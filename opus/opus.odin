@@ -5,7 +5,7 @@ import "core:c"
 import "shared:utils_private/library"
 
 @(private)
-LIBOPUS :: library.LIBPATH + "/libopus" + library.ARCH_end
+LIBOPUS :: library.Libpath + "/libopus" + library.ArchEnd
 foreign import lib {LIBOPUS}
 
 // opus_types.h

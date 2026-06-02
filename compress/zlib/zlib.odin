@@ -5,7 +5,7 @@ import "core:c"
 
 import "shared:utils_private/library"
 
-LIB :: library.LIBPATH + "/libz" + library.ARCH_end
+LIB :: library.Libpath + "/libz" + library.ArchEnd
 foreign import zlib {LIB}
 
 VERSION :: "1.3.2"

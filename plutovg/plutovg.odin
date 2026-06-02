@@ -6,7 +6,7 @@ import "shared:utils_private"
 import "shared:utils_private/library"
 
 @(private)
-LIBPLUTOVG :: library.LIBPATH + "/libplutovg" + library.ARCH_end
+LIBPLUTOVG :: library.Libpath + "/libplutovg" + library.ArchEnd
 foreign import plutovg {LIBPLUTOVG}
 
 plutovg_destroy_func_t :: #type proc "c" (closure: rawptr)
@@ -132,7 +132,7 @@ plutovg_path_parse_string :: proc(
 	ok: bool,
 	err: runtime.Allocator_Error,
 ) #optional_allocator_error {
-	buf := utils_private.make_non_zeroed_slice(
+	buf := utils_private.makeNonZeroedSlice(
 		[]u8,
 		len(data) + 1,
 		context.temp_allocator,
@@ -150,7 +150,7 @@ plutovg_matrix_parse_string :: proc(
 	ok: bool,
 	err: runtime.Allocator_Error,
 ) #optional_allocator_error {
-	buf := utils_private.make_non_zeroed_slice(
+	buf := utils_private.makeNonZeroedSlice(
 		[]u8,
 		len(data) + 1,
 		context.temp_allocator,
@@ -168,7 +168,7 @@ plutovg_color_parse_string :: proc(
 	consumed: int,
 	err: runtime.Allocator_Error,
 ) #optional_allocator_error {
-	buf := utils_private.make_non_zeroed_slice(
+	buf := utils_private.makeNonZeroedSlice(
 		[]u8,
 		len(data) + 1,
 		context.temp_allocator,
