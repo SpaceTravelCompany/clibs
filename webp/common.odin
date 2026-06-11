@@ -9,3 +9,5 @@ LIB :: library.Libpath + "/libwebp" + library.ArchEnd
 LIBDEMUX :: library.Libpath + "/libwebpdemux" + library.ArchEnd
 @(private)
 LIBMUX :: library.Libpath + "/libwebpmux" + library.ArchEnd
+@(private)
+LIBSHARPYUV :: library.Libpath + "/libsharpyuv" + library.ArchEnd

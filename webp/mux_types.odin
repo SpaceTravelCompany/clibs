@@ -16,7 +16,7 @@ import "core:c"
 
 _ :: c
 
-foreign import lib { LIB, LIBDEMUX, LIBMUX }
+foreign import lib { LIB, LIBDEMUX, LIBMUX, LIBSHARPYUV }
 
 // VP8X Feature Flags.
 WebPFeatureFlags :: enum c.int {

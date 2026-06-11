@@ -49,7 +49,7 @@ import "core:c"
 
 _ :: c
 
-foreign import lib { LIB, LIBDEMUX, LIBMUX }
+foreign import lib { LIB, LIBDEMUX, LIBMUX, LIBSHARPYUV }
 
 WebPDemuxer :: struct {}
 WebPAnimDecoder :: struct {}
